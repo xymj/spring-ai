@@ -162,12 +162,17 @@ public class McpClientAutoConfiguration {
 
 				spec = mcpSyncClientConfigurer.configure(namedTransport.name(), spec);
 
+				// 创建同步请求server客户端，此时会创建一个mcp client session用户发送消息到服务端，和解析处理从服务端接收的消息
 				var client = spec.build();
 
 				if (commonProperties.isInitialized()) {
+					// 客户端初始化, 通过mcp client session发送初始化消息initialize，经由transport发送到server
+					// 服务端返回初始化请求结果后，客户端初始化服务端信息和能力，并通过mcp client session发送通知初始化完成消息"notifications/initialized"，经由transport发送到server
+					// 内部调用McpAsyncClient.initialize()
 					client.initialize();
 				}
 
+				// 添加同步请求server客户端，放入spring容器中
 				mcpSyncClients.add(client);
 			}
 		}
@@ -229,12 +234,15 @@ public class McpClientAutoConfiguration {
 
 				spec = mcpSyncClientConfigurer.configure(namedTransport.name(), spec);
 
+				// 创建异步请求server客户端，此时会创建一个mcp client session用户发送消息到服务端，和解析处理从服务端接收的消息
 				var client = spec.build();
 
 				if (commonProperties.isInitialized()) {
+					// 客户端初始化, 通过mcp client session发送初始化消息initialize，经由transport发送到server
+					// 服务端返回初始化请求结果后，客户端初始化服务端信息和能力，并通过mcp client session发送通知初始化完成消息"notifications/initialized"，经由transport发送到server
 					client.initialize().block();
 				}
-
+				// 添加异步请求server客户端，放入spring容器中
 				mcpAsyncClients.add(client);
 			}
 		}

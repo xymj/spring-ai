@@ -76,6 +76,8 @@ public class McpWebFluxServerAutoConfiguration {
 	public WebFluxSseServerTransportProvider webFluxTransport(ObjectProvider<ObjectMapper> objectMapperProvider,
 			McpServerProperties serverProperties) {
 		ObjectMapper objectMapper = objectMapperProvider.getIfAvailable(ObjectMapper::new);
+		// 提供session数据交互通道
+		// WebFluxSseServer 每个连接session对应创建一个session transport
 		return new WebFluxSseServerTransportProvider(objectMapper, serverProperties.getSseMessageEndpoint(),
 				serverProperties.getSseEndpoint());
 	}

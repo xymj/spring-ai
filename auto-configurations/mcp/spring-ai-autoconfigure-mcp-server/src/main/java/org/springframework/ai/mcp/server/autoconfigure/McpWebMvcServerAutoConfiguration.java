@@ -71,6 +71,8 @@ public class McpWebMvcServerAutoConfiguration {
 	public WebMvcSseServerTransportProvider webMvcSseServerTransportProvider(
 			ObjectProvider<ObjectMapper> objectMapperProvider, McpServerProperties serverProperties) {
 		ObjectMapper objectMapper = objectMapperProvider.getIfAvailable(ObjectMapper::new);
+		// 提供session数据交互通道
+		// WebMvcSseServer 每个链接session对应创建一个session transport
 		return new WebMvcSseServerTransportProvider(objectMapper, serverProperties.getSseMessageEndpoint(),
 				serverProperties.getSseEndpoint());
 	}

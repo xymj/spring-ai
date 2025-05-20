@@ -92,6 +92,7 @@ public class SseWebFluxTransportAutoConfiguration {
 			var webClientBuilder = webClientBuilderTemplate.clone().baseUrl(serverParameters.getValue().url());
 			String sseEndpoint = serverParameters.getValue().sseEndpoint() != null
 					? serverParameters.getValue().sseEndpoint() : "/sse";
+			// 创建client与server的交互通道，web flux sse输入和输出流
 			var transport = WebFluxSseClientTransport.builder(webClientBuilder)
 				.sseEndpoint(sseEndpoint)
 				.objectMapper(objectMapper)

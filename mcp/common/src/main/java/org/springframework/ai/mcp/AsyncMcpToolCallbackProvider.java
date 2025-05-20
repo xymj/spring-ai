@@ -72,6 +72,8 @@ import org.springframework.util.CollectionUtils;
  * @see AsyncMcpToolCallback
  * @see McpAsyncClient
  */
+
+// 为不同的mcp client 异步tool提供不同的模型调用工具ToolCallback
 public class AsyncMcpToolCallbackProvider implements ToolCallbackProvider {
 
 	private final List<McpAsyncClient> mcpClients;

@@ -120,6 +120,8 @@ public class McpServerAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public McpServerTransportProvider stdioServerTransport() {
+		// 提供session数据交互通道
+		// stdio 单session transport
 		return new StdioServerTransportProvider();
 	}
 
@@ -129,6 +131,7 @@ public class McpServerAutoConfiguration {
 		return McpSchema.ServerCapabilities.builder();
 	}
 
+	// 把启动时已经存在的 ToolCallback 注入
 	@Bean
 	@ConditionalOnProperty(prefix = McpServerProperties.CONFIG_PREFIX, name = "type", havingValue = "SYNC",
 			matchIfMissing = true)
@@ -144,6 +147,12 @@ public class McpServerAutoConfiguration {
 		return this.toSyncToolSpecifications(tools, serverProperties);
 	}
 
+	/**
+	 * spring ai 体系创建的ToolCallback转化为mcp协议SyncToolSpecification，SyncToolSpecification包含工具详情+执行调度bifunction
+	 * @param tools
+	 * @param serverProperties
+	 * @return
+	 */
 	private List<McpServerFeatures.SyncToolSpecification> toSyncToolSpecifications(List<ToolCallback> tools,
 			McpServerProperties serverProperties) {
 
@@ -170,19 +179,21 @@ public class McpServerAutoConfiguration {
 	@Bean
 	@ConditionalOnProperty(prefix = McpServerProperties.CONFIG_PREFIX, name = "type", havingValue = "SYNC",
 			matchIfMissing = true)
-	public McpSyncServer mcpSyncServer(McpServerTransportProvider transportProvider,
+	public McpSyncServer mcpSyncServer(McpServerTransportProvider transportProvider, // 依赖注入McpServerTransportProvider
 			McpSchema.ServerCapabilities.Builder capabilitiesBuilder, McpServerProperties serverProperties,
-			ObjectProvider<List<SyncToolSpecification>> tools,
+			ObjectProvider<List<SyncToolSpecification>> tools, // 延迟依赖注入所有SyncToolSpecification类实例
 			ObjectProvider<List<SyncResourceSpecification>> resources,
 			ObjectProvider<List<SyncPromptSpecification>> prompts,
 			ObjectProvider<List<SyncCompletionSpecification>> completions,
 			ObjectProvider<BiConsumer<McpSyncServerExchange, List<McpSchema.Root>>> rootsChangeConsumers,
-			List<ToolCallbackProvider> toolCallbackProvider) {
+			List<ToolCallbackProvider> toolCallbackProvider // 依赖注入所有实现ToolCallbackProvider接口的实例
+	) {
 
 		McpSchema.Implementation serverInfo = new Implementation(serverProperties.getName(),
 				serverProperties.getVersion());
 
 		// Create the server with both tool and resource capabilities
+		// 创建McpSyncServer功能描述相关属性封装实例
 		SyncSpecification serverBuilder = McpServer.sync(transportProvider).serverInfo(serverInfo);
 
 		List<SyncToolSpecification> toolSpecifications = new ArrayList<>(tools.stream().flatMap(List::stream).toList());
@@ -196,6 +207,7 @@ public class McpServerAutoConfiguration {
 
 		toolSpecifications.addAll(this.toSyncToolSpecifications(providerToolCallbacks, serverProperties));
 
+		// 添加mcp server的tool能力
 		if (!CollectionUtils.isEmpty(toolSpecifications)) {
 			serverBuilder.tools(toolSpecifications);
 			capabilitiesBuilder.tools(serverProperties.isToolChangeNotification());
@@ -237,6 +249,7 @@ public class McpServerAutoConfiguration {
 
 		serverBuilder.instructions(serverProperties.getInstructions());
 
+		// 创建McpSyncServer实例
 		return serverBuilder.build();
 	}
 

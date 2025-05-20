@@ -59,6 +59,10 @@ import org.springframework.ai.tool.definition.ToolDefinition;
  * @see McpSyncClient
  * @see Tool
  */
+
+// 把mcp client封装为一个模型的function call，模型调用mcp client function call时，
+// 将function call的参数转换成mcp client function call的参数，执行mcp对应的function，
+// 将mcp client function call的返回值转换成function call的返回值
 public class SyncMcpToolCallback implements ToolCallback {
 
 	private final McpSyncClient mcpClient;
@@ -123,6 +127,7 @@ public class SyncMcpToolCallback implements ToolCallback {
 	@Override
 	public String call(String toolArguments, ToolContext toolContext) {
 		// ToolContext is not supported by the MCP tools
+		// 模型本身function call转发到mcp client function call
 		return this.call(toolArguments);
 	}
 

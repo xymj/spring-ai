@@ -27,6 +27,7 @@ import io.modelcontextprotocol.spec.McpClientTransport;
  * @author Christian Tzolov
  * @since 1.0.0
  */
+// 保质服务名称+多对应的传输通道，标准输入输出流、http client sse、web flux sse
 public record NamedClientMcpTransport(String name, McpClientTransport transport) {
 
 }

@@ -34,6 +34,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 
 /**
+ * 核心配置类，把mcp client封装为spring ai的tool callback，并注册到spring ai
  */
 @AutoConfiguration(after = { McpClientAutoConfiguration.class })
 @EnableConfigurationProperties(McpClientCommonProperties.class)
@@ -54,6 +55,8 @@ public class McpToolCallbackAutoConfiguration {
 			matchIfMissing = true)
 	public ToolCallbackProvider mcpToolCallbacks(ObjectProvider<List<McpSyncClient>> syncMcpClients) {
 		List<McpSyncClient> mcpClients = syncMcpClients.stream().flatMap(List::stream).toList();
+		// 多个mcp client封装到一个SyncMcpToolCallbackProvider，
+		// 调用getToolCallbacks方法时，会把mcp client封装的tool转化为SyncMcpToolCallback（tool callback），供模型工具调用时触发tool
 		return new SyncMcpToolCallbackProvider(mcpClients);
 	}
 
@@ -61,9 +64,12 @@ public class McpToolCallbackAutoConfiguration {
 	@ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "type", havingValue = "ASYNC")
 	public ToolCallbackProvider mcpAsyncToolCallbacks(ObjectProvider<List<McpAsyncClient>> mcpClientsProvider) {
 		List<McpAsyncClient> mcpClients = mcpClientsProvider.stream().flatMap(List::stream).toList();
+		// 多个mcp client封装到一个AsyncMcpToolCallbackProvider，
+		// 调用getToolCallbacks方法时，会把mcp client封装的tool转化为AsyncMcpToolCallback（tool callback），供模型工具调用时触发tool
 		return new AsyncMcpToolCallbackProvider(mcpClients);
 	}
 
+	// 条件类，判断是否需要加载McpToolCallbackAutoConfiguration，只有mcp client配置了enabled=true && toolcallback.enabled=true时，才加载
 	public static class McpToolCallbackAutoConfigurationCondition extends AllNestedConditions {
 
 		public McpToolCallbackAutoConfigurationCondition() {

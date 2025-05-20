@@ -68,6 +68,7 @@ import org.springframework.util.CollectionUtils;
  * @since 1.0.0
  */
 
+// 为不同的mcp client提供不同的模型调用工具ToolCallback
 public class SyncMcpToolCallbackProvider implements ToolCallbackProvider {
 
 	private final List<McpSyncClient> mcpClients;
@@ -134,6 +135,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider {
 				.tools()
 				.stream()
 				.filter(tool -> this.toolFilter.test(mcpClient, tool))
+				// 一个mcp client tool映射到一个SyncMcpToolCallback，mcp client+tool
 				.map(tool -> new SyncMcpToolCallback(mcpClient, tool)))
 			.toArray(ToolCallback[]::new);
 		validateToolCallbacks(array);

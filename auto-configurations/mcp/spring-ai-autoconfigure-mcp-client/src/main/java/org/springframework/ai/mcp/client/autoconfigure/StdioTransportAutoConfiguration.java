@@ -76,6 +76,7 @@ public class StdioTransportAutoConfiguration {
 		List<NamedClientMcpTransport> stdioTransports = new ArrayList<>();
 
 		for (Map.Entry<String, ServerParameters> serverParameters : stdioProperties.toServerParameters().entrySet()) {
+			// 创建client与server的交互通道，标准输入和输出流
 			var transport = new StdioClientTransport(serverParameters.getValue());
 			stdioTransports.add(new NamedClientMcpTransport(serverParameters.getKey(), transport));
 

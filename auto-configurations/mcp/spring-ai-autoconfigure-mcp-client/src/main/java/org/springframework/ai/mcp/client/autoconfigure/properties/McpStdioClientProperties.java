@@ -51,6 +51,11 @@ public class McpStdioClientProperties {
 	 * This resource should contain a JSON configuration defining the MCP servers and
 	 * their parameters.
 	 */
+	// 在 Spring Boot 中，你可以直接将 Resource 类型注入到 @ConfigurationProperties 类中，
+	// 而不是先注入为 String 类型再进行转换。从 Spring Boot 2.2.x 开始，Spring 支持通过类型转换直接将配置文件中的路径映射到 Resource 类型的属性。
+	// 在 application.yml 或 application.properties 中定义资源路径。
+	// myapp:
+	//  resource: classpath:myfile.txt
 	private Resource serversConfiguration;
 
 	/**

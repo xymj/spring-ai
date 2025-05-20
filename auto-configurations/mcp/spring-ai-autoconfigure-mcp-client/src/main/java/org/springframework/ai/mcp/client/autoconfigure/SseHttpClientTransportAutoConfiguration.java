@@ -97,6 +97,7 @@ public class SseHttpClientTransportAutoConfiguration {
 			String baseUrl = serverParameters.getValue().url();
 			String sseEndpoint = serverParameters.getValue().sseEndpoint() != null
 					? serverParameters.getValue().sseEndpoint() : "/sse";
+			// 创建client与server的交互通道，http client sse输入和输出流
 			var transport = HttpClientSseClientTransport.builder(baseUrl)
 				.sseEndpoint(sseEndpoint)
 				.clientBuilder(HttpClient.newBuilder())

@@ -26,18 +26,28 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
  * @since 1.0.0
  * @author YunKui Lu
  */
+
+// 组合条件：由于 McpServerStdioDisabledCondition 继承自 AllNestedConditions，
+// 这意味着它将所有嵌套的条件进行逻辑与操作（AND）。也就是说，只有当两个条件都满足时，整个条件才会被视为满足。
 public class McpServerStdioDisabledCondition extends AllNestedConditions {
 
 	public McpServerStdioDisabledCondition() {
+		// 这表示在解析配置阶段时会应用这些条件。
 		super(ConfigurationPhase.PARSE_CONFIGURATION);
 	}
 
+	// 内部静态类,McpServerEnabledCondition 类使用了 @ConditionalOnProperty 注解，
+	// 指定了前缀为 McpServerProperties.CONFIG_PREFIX 和属性名为 "enabled" 的配置项。
+	// 如果该配置项的值为 "true" 或者没有指定（即 matchIfMissing = true），则满足此条件。
 	@ConditionalOnProperty(prefix = McpServerProperties.CONFIG_PREFIX, name = "enabled", havingValue = "true",
 			matchIfMissing = true)
 	static class McpServerEnabledCondition {
 
 	}
 
+	// StdioDisabledCondition 类同样使用了 @ConditionalOnProperty 注解，
+	// 但这次检查的是前缀为 McpServerProperties.CONFIG_PREFIX 且名称为 "stdio" 的配置项。
+	// 只有当该项的值为 "false" 或未指定时，才满足此条件。
 	@ConditionalOnProperty(prefix = McpServerProperties.CONFIG_PREFIX, name = "stdio", havingValue = "false",
 			matchIfMissing = true)
 	static class StdioDisabledCondition {

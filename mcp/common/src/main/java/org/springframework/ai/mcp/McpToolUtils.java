@@ -170,6 +170,7 @@ public final class McpToolUtils {
 		var tool = new McpSchema.Tool(toolCallback.getToolDefinition().name(),
 				toolCallback.getToolDefinition().description(), toolCallback.getToolDefinition().inputSchema());
 
+		// 创建mcp工具，提供mcp工具tool描述，同时此处注册真正的工具调用function，封装在spring的ToolCallback call方法内
 		return new McpServerFeatures.SyncToolSpecification(tool, (exchange, request) -> {
 			try {
 				String callResult = toolCallback.call(ModelOptionsUtils.toJsonString(request),

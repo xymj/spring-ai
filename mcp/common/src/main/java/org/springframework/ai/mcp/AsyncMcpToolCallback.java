@@ -56,6 +56,12 @@ import org.springframework.ai.tool.definition.ToolDefinition;
  * @see McpAsyncClient
  * @see Tool
  */
+
+
+// 把mcp client封装为一个模型的function call，模型调用mcp client function call时，
+// 将function call的参数转换成mcp client function call的参数，执行mcp对应的function，
+// 把mcp的异步调用的方法，变为同步阻塞调用，当mcp的异步工具返回所有结果时，
+// 将结果通过ToolCallback返回给模型使用
 public class AsyncMcpToolCallback implements ToolCallback {
 
 	private final McpAsyncClient asyncMcpClient;
